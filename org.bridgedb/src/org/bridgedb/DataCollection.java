@@ -16,6 +16,8 @@
 // limitations under the License.
 package org.bridgedb;
 
+import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,9 +32,25 @@ import java.util.Set;
 public class DataCollection {
 
 	private Set<DataSource> sources = null;
-	
-	public DataCollection() {
-		// no intialization of sources; that happens when needed
+	private URI identifier; 
+
+	/**
+	 * Constructs an new, empty collection with the given identifier.
+	 * 
+	 * @param identifier a {@link URL} uniquely identifying this collection
+	 */
+	public DataCollection(URI identifier) {
+		if (identifier == null) throw new NullPointerException("A DataCollection identifier must not be null.");
+		this.identifier = identifier;
+	}
+
+	/**
+	 * Returns the unique identifier for this data collection.
+	 *
+	 * @return a URL for this collection
+	 */
+	public URI getIdentifier() {
+		return identifier;
 	}
 
 	/**

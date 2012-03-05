@@ -16,14 +16,23 @@
 // limitations under the License.
 package org.bridgedb;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DataCollectionTest {
 
 	@Test
-	public void testDuplicateAdding() {
-		DataCollection collection = new DataCollection();
+	public void testGetIdentifier() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		Assert.assertEquals("http://www.example.org/collection1", collection.getIdentifier().toString());
+	}
+
+	@Test
+	public void testDuplicateAdding() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
 
 		DataSource testSource = DataSource.register("X", "Affymetrix").asDataSource();
 		Assert.assertEquals(0, collection.getDataSources().size());
@@ -34,8 +43,8 @@ public class DataCollectionTest {
 	}
 
 	@Test
-	public void testEditingResultSet() {
-		DataCollection collection = new DataCollection();
+	public void testEditingResultSet() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
 
 		DataSource testSource = DataSource.register("X", "Affymetrix").asDataSource();
 		collection.addDataSource(testSource);
