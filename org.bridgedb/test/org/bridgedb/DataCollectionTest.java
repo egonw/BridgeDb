@@ -18,11 +18,17 @@ package org.bridgedb;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.PatternSyntaxException;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 public class DataCollectionTest {
+
+	@Test(expected=NullPointerException.class)
+	public void testNullInConstructor() {
+		new DataCollection(null);
+	}
 
 	@Test
 	public void testGetIdentifier() throws URISyntaxException {
@@ -53,4 +59,43 @@ public class DataCollectionTest {
 		Assert.assertEquals(1, collection.getDataSources().size());
 	}
 
+	@Test
+	public void testName() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		Assert.assertEquals("", collection.getName());
+		collection.setName("ISBN");
+		Assert.assertEquals("ISBN", collection.getName());
+		collection.setName(null);
+		Assert.assertEquals("", collection.getName());
+	}
+
+	@Test
+	public void testNamespace() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		Assert.assertEquals("", collection.getNamespace());
+		collection.setNamespace("isbn");
+		Assert.assertEquals("isbn", collection.getNamespace());
+		collection.setNamespace(null);
+		Assert.assertEquals("", collection.getNamespace());
+	}
+
+	@Test
+	public void testIdentifierPattern() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		Assert.assertEquals(".*", collection.getIdentifierPattern());
+		collection.setIdentifierPattern("\\w+");
+		Assert.assertEquals("\\w+", collection.getIdentifierPattern());
+	}
+
+	@Test(expected=PatternSyntaxException.class)
+	public void testIdentifierPatternCompiling() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		collection.setIdentifierPattern("(\\w+");
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void testIdentifierPatternNull() throws URISyntaxException {
+		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
+		collection.setIdentifierPattern(null);
+	}
 }

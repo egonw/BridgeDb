@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * A collection of data sources that share the same identifier type. These
@@ -32,7 +33,10 @@ import java.util.Set;
 public class DataCollection {
 
 	private Set<DataSource> sources = null;
-	private URI identifier; 
+	private URI identifier;
+	private String name;
+	private String identifierPattern;
+	private String namespace;
 
 	/**
 	 * Constructs an new, empty collection with the given identifier.
@@ -42,6 +46,71 @@ public class DataCollection {
 	public DataCollection(URI identifier) {
 		if (identifier == null) throw new NullPointerException("A DataCollection identifier must not be null.");
 		this.identifier = identifier;
+	}
+
+	/**
+	 * Returns the name of this data collection. If the name was not set, it returns an empty {@link String}.
+	 * 
+	 * @return a String with the name
+	 * @see    #setName(String)
+	 */
+	public String getName() {
+		if (this.name == null) return "";
+		return name;
+	}
+
+	/**
+	 * Sets the name of this data collection.
+	 * 
+	 * @param name the name
+	 * @see   #getName()
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Returns the regular expression that identifies the pattern of identifiers for this collection.
+	 * 
+	 * @return a {@link String} with a regular expression
+	 * @see    #setIdentifierPattern(String)
+	 */
+	public String getIdentifierPattern() {
+		if (this.identifierPattern == null) return ".*";
+		return identifierPattern;
+	}
+
+	/**
+	 * Sets the regular expression that identifies the pattern of identifiers for this collection.
+	 * The regular expression is Java-style.
+	 *
+	 * @param identifierPattern
+	 */
+	public void setIdentifierPattern(String identifierPattern) {
+		// check if the pattern compiles
+		Pattern.compile(identifierPattern);
+		this.identifierPattern = identifierPattern;
+	}
+
+	/**
+	 * Returns the namespace of this data collection.
+	 * 
+	 * @return the namespace of this collection.
+	 * @see    #setNamespace(String)
+	 */
+	public String getNamespace() {
+		if (this.namespace == null) return "";
+		return namespace;
+	}
+
+	/**
+	 * Sets the namespace of this data collection, which is used for e.g. MIRIAM URNs.
+	 * 
+	 * @param namespace the namespace for this collection
+	 * @see             DataCollection#getNamespace()
+	 */
+	public void setNamespace(String namespace) {
+		this.namespace = namespace;
 	}
 
 	/**
