@@ -6,6 +6,9 @@
 # ignore target files #
 target/
 bin/
+build/
+dist/
+apidoc/
 
 # ignore log files #
 *.log
