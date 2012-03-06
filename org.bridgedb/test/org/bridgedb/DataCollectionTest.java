@@ -98,4 +98,39 @@ public class DataCollectionTest {
 		DataCollection collection = new DataCollection(new URI("http://www.example.org/collection1"));
 		collection.setIdentifierPattern(null);
 	}
+
+	@Test
+	public void testMapIDCollection() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testMapIDSingleXref() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testXRefExists() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testFreeSearch() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testGetCapabilities() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testClose() {
+		Assert.fail("to implement");
+	}
+
+	@Test
+	public void testIsConnected() {
+		Assert.fail("to implement");
+	}
 }

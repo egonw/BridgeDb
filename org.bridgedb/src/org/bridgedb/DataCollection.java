@@ -18,8 +18,10 @@ package org.bridgedb;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -30,7 +32,7 @@ import java.util.regex.Pattern;
  * 
  * @author egonw
  */
-public class DataCollection {
+public class DataCollection implements IDMapper {
 
 	private Set<DataSource> sources = null;
 	private URI identifier;
@@ -147,5 +149,50 @@ public class DataCollection {
 	public void addDataSource(DataSource source) {
 		if (sources == null) sources = new HashSet<DataSource>();
 		sources.add(source);
+	}
+
+	@Override
+	public Map<Xref, Set<Xref>> mapID(Collection<Xref> srcXrefs,
+			DataSource... tgtDataSources) throws IDMapperException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Set<Xref> mapID(Xref ref, DataSource... tgtDataSources)
+			throws IDMapperException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean xrefExists(Xref xref) throws IDMapperException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Set<Xref> freeSearch(String text, int limit)
+			throws IDMapperException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public IDMapperCapabilities getCapabilities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void close() throws IDMapperException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isConnected() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
