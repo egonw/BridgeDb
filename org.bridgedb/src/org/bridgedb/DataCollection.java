@@ -23,7 +23,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.bridgedb.impl.InternalUtils;
 
 /**
  * A collection of data sources that share the same identifier type. These
@@ -49,6 +52,15 @@ public class DataCollection implements IDMapper {
 		if (identifier == null) throw new NullPointerException("A DataCollection identifier must not be null.");
 		this.identifier = identifier;
 	}
+
+    public DataCollection(Set<DataSource> mappedSources){
+        this.sources = mappedSources;
+    }
+    
+    public DataCollection(Set<DataSource> mappedSources, String patternString){
+        this.sources = mappedSources;
+        this.identifierPattern = patternString;
+    }
 
 	/**
 	 * Returns the name of this data collection. If the name was not set, it returns an empty {@link String}.
@@ -154,45 +166,81 @@ public class DataCollection implements IDMapper {
 	@Override
 	public Map<Xref, Set<Xref>> mapID(Collection<Xref> srcXrefs,
 			DataSource... tgtDataSources) throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+        return InternalUtils.mapMultiFromSingle(this, srcXrefs, tgtDataSources);
 	}
 
 	@Override
 	public Set<Xref> mapID(Xref ref, DataSource... tgtDataSources)
 			throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+        Set<Xref> results = new HashSet<Xref>();
+        if (!sources.contains(ref.getDataSource())){
+            return results;
+        }
+        if (tgtDataSources.length == 0){
+            for (DataSource dataSource:sources) {
+                results.add(new Xref (ref.getId(), dataSource));
+            }
+        } else {
+            for (DataSource dataSource:sources) {
+                for (DataSource tgtDataSource:tgtDataSources) {
+                    if (dataSource == tgtDataSource) {
+                        results.add(new Xref (ref.getId(), dataSource));
+                    }
+                }
+            }            
+        }
+        return results;
 	}
 
 	@Override
 	public boolean xrefExists(Xref xref) throws IDMapperException {
-		// TODO Auto-generated method stub
-		return false;
+        //Maybe add some id pattern checking
+        if (sources.contains(xref.getDataSource())){
+            return true;
+        } else {
+            return false;
+        }
 	}
 
 	@Override
 	public Set<Xref> freeSearch(String text, int limit)
 			throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+        if (identifierPattern == null) {
+            throw new UnsupportedOperationException("Not supported yet.");        
+        }
+        Pattern p = Pattern.compile(identifierPattern);
+        Matcher m = p.matcher(text);
+        boolean allowedId = m.matches();
+        if (allowedId){
+            Xref temp = new Xref(text, sources.iterator().next());
+            return mapID(temp);
+        } else {
+            return new HashSet<Xref>();
+        } 
 	}
 
 	@Override
 	public IDMapperCapabilities getCapabilities() {
-		// TODO Auto-generated method stub
-		return null;
+        return new DataCollectionCapabilities(identifierPattern != null);
 	}
 
 	@Override
 	public void close() throws IDMapperException {
-		// TODO Auto-generated method stub
-		
+		//do nothing
 	}
 
 	@Override
 	public boolean isConnected() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
+
+    private class DataCollectionCapabilities extends AbstractIDMapperCapabilities {
+
+        public DataCollectionCapabilities(final boolean freeSearch) 
+        {
+            super (sources, freeSearch, null);
+        }
+
+    }
+
 }
