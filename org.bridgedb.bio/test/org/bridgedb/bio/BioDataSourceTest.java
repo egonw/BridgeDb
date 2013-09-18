@@ -185,6 +185,14 @@ public class BioDataSourceTest
 	}
 
 	@Test
+	public void testNanoParticleOntology() {
+		BioDataSource.init();
+		DataSource source = DataSource.getBySystemCode("Npo");
+		Assert.assertNotNull(source);
+		Assert.assertEquals("http://purl.bioontology.org/ontology/npo#NPO_707", source.getUrl("NPO_707"));
+	}
+
+	@Test
 	public void systemCodesDoNotHaveWhitespace() {
 		BioDataSource.init();
 		Set<DataSource> sources = DataSource.getDataSources();
