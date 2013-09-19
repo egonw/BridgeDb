@@ -189,7 +189,7 @@ public class BioDataSourceTest
 		BioDataSource.init();
 		DataSource source = DataSource.getBySystemCode("Npo");
 		Assert.assertNotNull(source);
-		Assert.assertEquals("http://purl.bioontology.org/ontology/npo#NPO_707", source.getUrl("NPO_707"));
+		Assert.assertEquals("http://bioportal.bioontology.org/ontologies/49076?p=terms&conceptid=npo%3ANPO_707&jump_to_nav=true", source.getUrl("NPO_707"));
 	}
 
 	@Test
