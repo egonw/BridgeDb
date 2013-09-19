@@ -193,6 +193,15 @@ public class BioDataSourceTest
 	}
 
 	@Test
+	public void testNPOPattern()
+	{
+		Set<DataSource> matches = DataSourcePatterns.getDataSourceMatches("NPO_707");
+		Assert.assertNotSame(0, matches.size());
+		for (DataSource source : matches) System.out.println(source.getFullName());
+		assertTrue(matches.contains(DataSource.getBySystemCode("Npo")));
+	}
+
+	@Test
 	public void systemCodesDoNotHaveWhitespace() {
 		BioDataSource.init();
 		Set<DataSource> sources = DataSource.getDataSources();

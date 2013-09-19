@@ -17,8 +17,6 @@
 package org.bridgedb.bio;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -606,6 +604,17 @@ public class BioDataSource
 				if (fields.length > 6 && fields[6].length() > 0) builder.organism(Organism.fromLatinName(fields[6]));					      
 				if (fields.length > 7 && fields[7].length() > 0) builder.primary (fields[7].equals ("1"));					      
 				if (fields.length > 8) builder.urnBase(fields[8]);
+				if (fields.length > 9) {
+					try {
+						DataSourcePatterns.registerPattern(
+							builder.asDataSource(),
+							Pattern.compile(fields[9])
+						);
+					} catch (Exception exception) {
+						// ignore this exception before 2.0
+						System.out.println("Regexp error for syscode " + fields[1] + ": "+ exception.getMessage());
+					}
+				}
 			}
 			
 			InternalUtils.readXmlConfig(
