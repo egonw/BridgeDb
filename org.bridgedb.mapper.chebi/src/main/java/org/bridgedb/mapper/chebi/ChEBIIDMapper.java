@@ -17,10 +17,16 @@
 //
 package org.bridgedb.mapper.chebi;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,11 +52,11 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 		/** {@inheritDoc} */
 		public IDMapper connect(String config) throws IDMapperException  {
 			return new ChEBIIDMapper(
-				config.contains("matchSuperClass"),
+                config.contains("matchSuperClass"),
 				config.contains("matchSubClass"),
 				config.contains("matchChargeStates"),
 				config.contains("matchTautomers")
-			);
+            );
 		}
 	}
 
@@ -129,9 +135,51 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 		loadData();
 	}
 
+	private Map<String,List<String>> superClasses = null;
+	private Map<String,List<String>> subClasses = null;
+
 	private void loadData() {
-		// TODO Auto-generated method stub
-		
+		if (matchSuperClass) {
+			superClasses = new HashMap<String, List<String>>(44000);
+			InputStream superClassStream = this.getClass().getClassLoader().getResourceAsStream("superclasses.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(superClassStream));
+				String line = reader.readLine();
+				while (line != null) {
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					superClasses.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				superClassStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			superClasses = Collections.emptyMap();
+		}
+		if (matchSubClass) {
+			subClasses = new HashMap<String, List<String>>(44000);
+			InputStream subClassStream = this.getClass().getClassLoader().getResourceAsStream("subclasses.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(subClassStream));
+				String line = reader.readLine();
+				while (line != null) {
+//					System.out.println("Sub line: " + line);
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					subClasses.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				subClassStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			subClasses = Collections.emptyMap();
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -140,14 +188,34 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	@Override
 	public Map<Xref, Set<Xref>> mapID(Collection<Xref> srcXrefs,
 			DataSource... tgtDataSources) throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+		Map<Xref, Set<Xref>> results = new HashMap<Xref, Set<Xref>>(10);
+		for (Xref xref : srcXrefs) {
+			if (matchSuperClass) {
+				Set<Xref> trgXrefs = new HashSet<Xref>();
+				for (String targetIDs : superClasses.get(shorten(xref.getId()))) {
+					trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+				}
+				results.put(xref, trgXrefs);
+			}
+			if (matchSubClass) {
+				Set<Xref> trgXrefs = new HashSet<Xref>();
+				for (String targetIDs : subClasses.get(shorten(xref.getId()))) {
+					trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+				}
+				results.put(xref, trgXrefs);
+			}
+		}
+		return results;
+	}
+
+	private Object shorten(String id) {
+		if (id.startsWith("CHEBI:")) return id.substring(6);
+		return id;
 	}
 
 	@Override
 	public boolean xrefExists(Xref xref) throws IDMapperException {
-		// TODO Auto-generated method stub
-		return false;
+		return superClasses.containsKey(shorten(xref.getId()));
 	}
 
 	@Override
@@ -169,15 +237,13 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	@Override
 	public Set<String> getAttributes(Xref ref, String attrType)
 			throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptySet();
 	}
 
 	@Override
 	public Map<String, Set<String>> getAttributes(Xref ref)
 			throws IDMapperException {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.emptyMap();
 	}
 
 	@Override
