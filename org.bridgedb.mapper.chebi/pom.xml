@@ -10,6 +10,8 @@
   	<version>2.1.0-SNAPSHOT</version>
   </parent>
 
+        <packaging>bundle</packaging>
+
 	<build>
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>
@@ -18,9 +20,29 @@
         <testSourceDirectory>src/test/java</testSourceDirectory>
         <testResources>
             <testResource>
-            <directory>src/main/resources</directory>
-        </testResource>
-     </testResources>
+                <directory>src/main/resources</directory>
+            </testResource>
+        </testResources>
+                <plugins>
+                        <!-- Generates the OSGi metadata based on the osgi.bnd file. -->
+                        <plugin>
+                                <groupId>org.apache.felix</groupId>
+                                <artifactId>maven-bundle-plugin</artifactId>
+                                <version>2.3.7</version>
+                                <extensions>true</extensions>
+                                <configuration>
+                                        <instructions>
+                                                <Bundle-SymbolicName>org.bridgedb.mapper.chebi</Bundle-SymbolicName>
+                                                <Bundle-Version>2.1.0-SNAPSHOT</Bundle-Version>
+                                                <!--   >Export-Package>${bundle.namespace}</Export-Package>
+                                                <Export-Package>com.github.egonw.ops4j</Export-Package>
+                                                <Export-Package>com.hp.hpl.jena.ontology</Export-Package>
+                                                <Private-Package>${bundle.namespace}.internal.*</Private-Package -->
+                                                <Bundle-Activator>org.bridgedb.mapper.chebi.Activator</Bundle-Activator>
+                                        </instructions>
+                                </configuration>
+                        </plugin>
+                </plugins>
 	</build>
 	<dependencies>
 		<dependency>
@@ -35,5 +57,16 @@
 			<version>2.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>osgi</artifactId>
+            <version>3.5.0.v20090520</version>
+        </dependency>
+  		<dependency>
+  			<groupId>junit</groupId>
+  			<artifactId>junit</artifactId>
+  			<version>4.4</version>
+  			<scope>test</scope>
+  		</dependency>
 	</dependencies>
 </project>
