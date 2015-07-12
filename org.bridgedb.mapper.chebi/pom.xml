@@ -18,11 +18,11 @@
 		<finalName>${artifactId}-${version}</finalName>
         <sourceDirectory>src/main/java</sourceDirectory>
         <testSourceDirectory>src/test/java</testSourceDirectory>
-        <testResources>
-            <testResource>
+        <resources>
+            <resource>
                 <directory>src/main/resources</directory>
-            </testResource>
-        </testResources>
+            </resource>
+        </resources>
                 <plugins>
                         <!-- Generates the OSGi metadata based on the osgi.bnd file. -->
                         <plugin>
