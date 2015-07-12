@@ -2,7 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: org.bridgedb.mapper.chebi
 Bundle-SymbolicName: org.bridgedb.mapper.chebi
+Bundle-Activator: org.bridgedb.mapper.chebi.Activator
 Bundle-Version: 2.1.0.qualifier
 Export-Package: org.bridgedb.mapper.chebi
 Require-Bundle: org.bridgedb,
- org.bridgedb.bio
+ org.bridgedb.bio,
+ org.eclipse.osgi
