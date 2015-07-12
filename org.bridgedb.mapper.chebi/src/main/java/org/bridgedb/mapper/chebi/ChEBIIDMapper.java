@@ -190,19 +190,41 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 			DataSource... tgtDataSources) throws IDMapperException {
 		Map<Xref, Set<Xref>> results = new HashMap<Xref, Set<Xref>>(10);
 		for (Xref xref : srcXrefs) {
-			if (matchSuperClass) {
-				Set<Xref> trgXrefs = new HashSet<Xref>();
-				for (String targetIDs : superClasses.get(shorten(xref.getId()))) {
-					trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+			if (xref != null && xref.getDataSource().getFullName().equals("ChEBI")) {
+				if (matchSuperClass && superClasses != null) {
+					Set<Xref> trgXrefs = new HashSet<Xref>();
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					superClasses.get(shorten(xref.getId()));
+					List<String> mappings = superClasses.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : superClasses.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+						results.put(xref, trgXrefs);
+					}
 				}
-				results.put(xref, trgXrefs);
-			}
-			if (matchSubClass) {
-				Set<Xref> trgXrefs = new HashSet<Xref>();
-				for (String targetIDs : subClasses.get(shorten(xref.getId()))) {
-					trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+				if (matchSubClass && subClasses != null) {
+					Set<Xref> trgXrefs = new HashSet<Xref>();
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					subClasses.get(shorten(xref.getId()));
+					List<String> mappings = subClasses.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : subClasses.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+						results.put(xref, trgXrefs);
+					}
 				}
-				results.put(xref, trgXrefs);
 			}
 		}
 		return results;

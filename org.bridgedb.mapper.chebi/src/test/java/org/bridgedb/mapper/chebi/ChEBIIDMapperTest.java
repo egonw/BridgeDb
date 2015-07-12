@@ -14,6 +14,8 @@
 //
 package org.bridgedb.mapper.chebi;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Set;
 
 import org.bridgedb.BridgeDb;
@@ -87,4 +89,48 @@ public class ChEBIIDMapperTest {
 		Assert.assertFalse(xrefs.contains(new Xref("CHEBI:61220", DataSource.getExistingByFullName("ChEBI"))));
 	}
 
+	@Test
+	@SuppressWarnings("serial")
+	public void testMatchCollection() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init();
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass");
+		Map<Xref,Set<Xref>> xrefs = mapper.mapID(
+			new ArrayList<Xref>() {{
+				add(new Xref("CHEBI:61221", DataSource.getExistingByFullName("ChEBI")));
+			}},
+			DataSource.getExistingByFullName("ChEBI")
+		);
+		Assert.assertNotSame(0, xrefs.size());
+	}
+
+	@Test
+	@SuppressWarnings("serial")
+	public void testMatchCollection_Null() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init();
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass");
+		Map<Xref,Set<Xref>> xrefs = mapper.mapID(
+			new ArrayList<Xref>() {{
+				add(null);
+			}},
+			DataSource.getExistingByFullName("ChEBI")
+		);
+		Assert.assertEquals(0, xrefs.size());
+	}
+
+	@Test
+	@SuppressWarnings("serial")
+	public void testMatchCollection_HMDB() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init();
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass");
+		Map<Xref,Set<Xref>> xrefs = mapper.mapID(
+			new ArrayList<Xref>() {{
+				add(new Xref("HMDB00001", DataSource.getExistingByFullName("HMDB")));
+			}},
+			DataSource.getExistingByFullName("ChEBI")
+		);
+		Assert.assertEquals(0, xrefs.size());
+	}
 }
