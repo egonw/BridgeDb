@@ -59,6 +59,17 @@ public class ChEBIIDMapperTest {
 	}
 
 	@Test
+	public void testXrefSubSuperCombo() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init();
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass,matchSubClass");
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:35508", DataSource.getExistingByFullName("ChEBI")));
+		Assert.assertNotSame(0, xrefs.size());
+		Assert.assertFalse(xrefs.contains(new Xref("CHEBI:35507", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertFalse(xrefs.contains(new Xref("CHEBI:35341", DataSource.getExistingByFullName("ChEBI"))));
+	}
+
+	@Test
 	public void testXrefExists() throws IDMapperException, ClassNotFoundException {
 		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
 		DataSourceTxt.init();
@@ -76,6 +87,27 @@ public class ChEBIIDMapperTest {
 		Assert.assertEquals(2, xrefs.size());
 		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:62524", DataSource.getExistingByFullName("ChEBI"))));
 		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:61220", DataSource.getExistingByFullName("ChEBI"))));
+	}
+
+	@Test
+	public void testRoles() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init(); 
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchRoles");
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:73630", DataSource.getExistingByFullName("ChEBI")));
+		Assert.assertEquals(1, xrefs.size());
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:25212", DataSource.getExistingByFullName("ChEBI"))));
+	}
+
+	@Test
+	public void testGlucoseRoles() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init(); 
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchRoles");
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:17234", DataSource.getExistingByFullName("ChEBI")));
+		Assert.assertEquals(1, xrefs.size());
+		System.out.println("" + xrefs);
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:25212", DataSource.getExistingByFullName("ChEBI"))));
 	}
 
 	@Test

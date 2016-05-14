@@ -55,7 +55,8 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
                 config.contains("matchSuperClass"),
 				config.contains("matchSubClass"),
 				config.contains("matchChargeStates"),
-				config.contains("matchTautomers")
+				config.contains("matchTautomers"),
+				config.contains("matchRoles")
             );
 		}
 	}
@@ -123,20 +124,26 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	private boolean matchSubClass;
 	private boolean matchChargeStates;
 	private boolean matchTautomers;
+	private boolean matchRoles;
 
 	private ChEBIIDMapper(
 		boolean matchSuperClass, boolean matchSubClass,
-		boolean matchChargeStates, boolean matchTautomers) throws IDMapperException {
+		boolean matchChargeStates, boolean matchTautomers,
+		boolean matchRoles) throws IDMapperException {
 		this.matchSuperClass = matchSuperClass;
 		this.matchSubClass = matchSubClass;
 		this.matchChargeStates = matchChargeStates;
 		this.matchTautomers = matchTautomers;
+		this.matchRoles = matchRoles;
 		capabilities = new ChEBICapabilities();
 		loadData();
 	}
 
 	private Map<String,List<String>> superClasses = null;
 	private Map<String,List<String>> subClasses = null;
+	private Map<String,List<String>> roles = null;
+	private Map<String,List<String>> charges = null;
+	private Map<String,List<String>> tautomers = null;
 
 	private void loadData() {
 		if (matchSuperClass) {
@@ -179,6 +186,67 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 			}
 		} else {
 			subClasses = Collections.emptyMap();
+		}
+		if (matchRoles) {
+			roles = new HashMap<String, List<String>>(21000);
+			InputStream rolesStream = this.getClass().getClassLoader().getResourceAsStream("roles.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(rolesStream));
+				String line = reader.readLine();
+				while (line != null) {
+//					System.out.println("Sub line: " + line);
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					roles.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				rolesStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			roles = Collections.emptyMap();
+		}
+		if (matchChargeStates) {
+			charges = new HashMap<String, List<String>>(21000);
+			InputStream chargesStream = this.getClass().getClassLoader().getResourceAsStream("charges.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(chargesStream));
+				String line = reader.readLine();
+				while (line != null) {
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					charges.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				chargesStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			charges = Collections.emptyMap();
+		}
+		if (matchTautomers) {
+			tautomers = new HashMap<String, List<String>>(21000);
+			InputStream tautomersStream = this.getClass().getClassLoader().getResourceAsStream("tautomers.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(tautomersStream));
+				String line = reader.readLine();
+				while (line != null) {
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					tautomers.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				tautomersStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			tautomers = Collections.emptyMap();
 		}
 	}
 
@@ -225,6 +293,57 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						results.put(xref, trgXrefs);
 					}
 				}
+				if (matchRoles && roles != null) {
+					Set<Xref> trgXrefs = new HashSet<Xref>();
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					roles.get(shorten(xref.getId()));
+					List<String> mappings = roles.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : roles.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+						results.put(xref, trgXrefs);
+					}
+				}
+				if (matchChargeStates && charges != null) {
+					Set<Xref> trgXrefs = new HashSet<Xref>();
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					charges.get(shorten(xref.getId()));
+					List<String> mappings = charges.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : charges.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+						results.put(xref, trgXrefs);
+					}
+				}
+				if (matchTautomers && tautomers != null) {
+					Set<Xref> trgXrefs = new HashSet<Xref>();
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					tautomers.get(shorten(xref.getId()));
+					List<String> mappings = tautomers.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : tautomers.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+						results.put(xref, trgXrefs);
+					}
+				}
 			}
 		}
 		return results;
@@ -237,7 +356,11 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 
 	@Override
 	public boolean xrefExists(Xref xref) throws IDMapperException {
-		return superClasses.containsKey(shorten(xref.getId()));
+		return superClasses.containsKey(shorten(xref.getId())) ||
+			subClasses.containsKey(shorten(xref.getId())) ||
+			charges.containsKey(shorten(xref.getId())) ||
+			roles.containsKey(shorten(xref.getId())) ||
+			tautomers.containsKey(shorten(xref.getId()));
 	}
 
 	@Override
