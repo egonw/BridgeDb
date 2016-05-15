@@ -65,8 +65,8 @@ public class ChEBIIDMapperTest {
 		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass,matchSubClass");
 		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:35508", DataSource.getExistingByFullName("ChEBI")));
 		Assert.assertNotSame(0, xrefs.size());
-		Assert.assertFalse(xrefs.contains(new Xref("CHEBI:35507", DataSource.getExistingByFullName("ChEBI"))));
-		Assert.assertFalse(xrefs.contains(new Xref("CHEBI:35341", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertFalse(xrefs.contains(new Xref("35507", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertFalse(xrefs.contains(new Xref("35341", DataSource.getExistingByFullName("ChEBI"))));
 	}
 
 	@Test
@@ -94,9 +94,9 @@ public class ChEBIIDMapperTest {
 		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
 		DataSourceTxt.init(); 
 		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchRoles");
-		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:73630", DataSource.getExistingByFullName("ChEBI")));
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:66211", DataSource.getExistingByFullName("ChEBI")));
 		Assert.assertEquals(1, xrefs.size());
-		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:25212", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:64696", DataSource.getExistingByFullName("ChEBI"))));
 	}
 
 	@Test
@@ -107,7 +107,7 @@ public class ChEBIIDMapperTest {
 		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:17234", DataSource.getExistingByFullName("ChEBI")));
 		Assert.assertEquals(1, xrefs.size());
 		System.out.println("" + xrefs);
-		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:25212", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:78675", DataSource.getExistingByFullName("ChEBI"))));
 	}
 
 	@Test
