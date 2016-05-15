@@ -259,8 +259,8 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 		Map<Xref, Set<Xref>> results = new HashMap<Xref, Set<Xref>>(10);
 		for (Xref xref : srcXrefs) {
 			if (xref != null && xref.getDataSource().getFullName().equals("ChEBI")) {
+				Set<Xref> trgXrefs = new HashSet<Xref>();
 				if (matchSuperClass && superClasses != null) {
-					Set<Xref> trgXrefs = new HashSet<Xref>();
 					System.out.println("xref: " + xref);
 					xref.getId();
 					System.out.println("id: " + xref.getId());
@@ -273,11 +273,9 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						for (String targetIDs : superClasses.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
-						results.put(xref, trgXrefs);
 					}
 				}
 				if (matchSubClass && subClasses != null) {
-					Set<Xref> trgXrefs = new HashSet<Xref>();
 					System.out.println("xref: " + xref);
 					xref.getId();
 					System.out.println("id: " + xref.getId());
@@ -290,11 +288,9 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						for (String targetIDs : subClasses.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
-						results.put(xref, trgXrefs);
 					}
 				}
 				if (matchRoles && roles != null) {
-					Set<Xref> trgXrefs = new HashSet<Xref>();
 					System.out.println("xref: " + xref);
 					xref.getId();
 					System.out.println("id: " + xref.getId());
@@ -307,11 +303,9 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						for (String targetIDs : roles.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
-						results.put(xref, trgXrefs);
 					}
 				}
 				if (matchChargeStates && charges != null) {
-					Set<Xref> trgXrefs = new HashSet<Xref>();
 					System.out.println("xref: " + xref);
 					xref.getId();
 					System.out.println("id: " + xref.getId());
@@ -324,11 +318,9 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						for (String targetIDs : charges.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
-						results.put(xref, trgXrefs);
 					}
 				}
 				if (matchTautomers && tautomers != null) {
-					Set<Xref> trgXrefs = new HashSet<Xref>();
 					System.out.println("xref: " + xref);
 					xref.getId();
 					System.out.println("id: " + xref.getId());
@@ -341,9 +333,9 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 						for (String targetIDs : tautomers.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
-						results.put(xref, trgXrefs);
 					}
 				}
+				results.put(xref, trgXrefs);
 			}
 		}
 		return results;
