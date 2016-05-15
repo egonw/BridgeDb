@@ -253,6 +253,20 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	/** {@inheritDoc} */
 	public void close() throws IDMapperException {}
 
+	private Set<String> getSuperClasses(String ref, Set<String> supers) {
+		if (supers == null) supers = new HashSet<String>();
+		List<String> mappings = superClasses.get(ref);
+		if (mappings != null) {
+			for (String targetIDs : mappings) {
+				if (!supers.contains(targetIDs)) {
+					supers.add(targetIDs);
+					getSuperClasses(targetIDs, supers);
+				}
+			}
+		}
+		return supers;
+	}
+
 	@Override
 	public Map<Xref, Set<Xref>> mapID(Collection<Xref> srcXrefs,
 			DataSource... tgtDataSources) throws IDMapperException {
@@ -267,10 +281,10 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 					shorten(xref.getId());
 					System.out.println("shortened: " + shorten(xref.getId()));
 					superClasses.get(shorten(xref.getId()));
-					List<String> mappings = superClasses.get(shorten(xref.getId()));
+					Set<String> mappings = getSuperClasses(shorten(xref.getId()), (Set<String>)null);
 					System.out.println("mappings: " + mappings);
 					if (mappings != null) {
-						for (String targetIDs : superClasses.get(shorten(xref.getId()))) {
+						for (String targetIDs : mappings) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
 					}
@@ -341,7 +355,7 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 		return results;
 	}
 
-	private Object shorten(String id) {
+	private String shorten(String id) {
 		if (id.startsWith("CHEBI:")) return id.substring(6);
 		return id;
 	}

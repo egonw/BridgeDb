@@ -42,9 +42,25 @@ public class ChEBIIDMapperTest {
 		DataSourceTxt.init();
 		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass");
 		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:35508", DataSource.getExistingByFullName("ChEBI")));
-		Assert.assertEquals(2, xrefs.size());
+		Assert.assertNotSame(0, xrefs.size());
 		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:35507", DataSource.getExistingByFullName("ChEBI"))));
 		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:35341", DataSource.getExistingByFullName("ChEBI"))));
+	}
+
+	@Test
+	public void testMatchSuperClassesDeep() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init();
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchSuperClass");
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:35508", DataSource.getExistingByFullName("ChEBI")));
+		Assert.assertNotSame(0, xrefs.size());
+		System.out.println("XXXXXXX: " + xrefs);
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:35341", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:18059", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:50860", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:33582", DataSource.getExistingByFullName("ChEBI"))));
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:33675", DataSource.getExistingByFullName("ChEBI"))));
+		// that's deep enough
 	}
 
 	@Test
