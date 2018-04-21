@@ -4,6 +4,7 @@
   <groupId>org.bridgedb</groupId>
   <artifactId>org.bridgedb.bio</artifactId>
   <name>BridgeDb Bio</name>
+  <packaging>bundle</packaging>
   <description>Defines Datasources</description>
   
   <parent>
@@ -30,6 +31,19 @@
 				<directory>test-resources</directory>
 			</testResource>
 		</testResources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>org.bridgedb.bio</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 	
 	<dependencies>
@@ -39,6 +53,11 @@
 			<version>${project.parent.version}</version>
 			<scope>compile</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 	</dependencies>
   
 </project>

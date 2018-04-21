@@ -3,6 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bridgedb</groupId>
   <artifactId>org.bridgedb</artifactId>
+  <packaging>bundle</packaging>
   <name>BridgeDb</name>
   <parent>
   	<artifactId>bridgedb-bundle</artifactId>
@@ -30,17 +31,25 @@
 		</testResources>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Export-Package>buildsystem,org.bridgedb,org.bridgedb.file,org.bridgedb.impl,org.bridgedb.webservice</Export-Package>
+                    </instructions>
+                </configuration>
             </plugin>
         </plugins>
 	</build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
 
 </project>
