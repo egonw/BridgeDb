@@ -56,7 +56,8 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 				config.contains("matchSubClass"),
 				config.contains("matchChargeStates"),
 				config.contains("matchTautomers"),
-				config.contains("matchRoles")
+				config.contains("matchRoles"),
+				config.contains("matchEnantiomers")
             );
 		}
 	}
@@ -125,16 +126,18 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	private boolean matchChargeStates;
 	private boolean matchTautomers;
 	private boolean matchRoles;
+	private boolean matchEnantiomers;
 
 	private ChEBIIDMapper(
 		boolean matchSuperClass, boolean matchSubClass,
 		boolean matchChargeStates, boolean matchTautomers,
-		boolean matchRoles) throws IDMapperException {
+		boolean matchRoles, boolean matchEnantiomers) throws IDMapperException {
 		this.matchSuperClass = matchSuperClass;
 		this.matchSubClass = matchSubClass;
 		this.matchChargeStates = matchChargeStates;
 		this.matchTautomers = matchTautomers;
 		this.matchRoles = matchRoles;
+		this.matchEnantiomers = matchEnantiomers;
 		capabilities = new ChEBICapabilities();
 		loadData();
 	}
@@ -144,6 +147,7 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 	private Map<String,List<String>> roles = null;
 	private Map<String,List<String>> charges = null;
 	private Map<String,List<String>> tautomers = null;
+	private Map<String,List<String>> enantiomers = null;
 
 	private void loadData() {
 		if (matchSuperClass) {
@@ -248,6 +252,26 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 		} else {
 			tautomers = Collections.emptyMap();
 		}
+		if (matchEnantiomers) {
+			enantiomers = new HashMap<String, List<String>>(21000);
+			InputStream enantiomersStream = this.getClass().getClassLoader().getResourceAsStream("enantiomers.txt");
+			try {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(enantiomersStream));
+				String line = reader.readLine();
+				while (line != null) {
+					String[] parts = line.split(" ");
+					String key = parts[0];
+					String[] supers = parts[1].split(",");
+					enantiomers.put(key, Arrays.asList(supers));
+					line = reader.readLine();
+				}
+				enantiomersStream.close();
+			} catch (IOException e) {
+				// ignore
+			}
+		} else {
+			enantiomers = Collections.emptyMap();
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -345,6 +369,21 @@ public class ChEBIIDMapper extends AbstractIDMapper implements AttributeMapper {
 					System.out.println("mappings: " + mappings);
 					if (mappings != null) {
 						for (String targetIDs : tautomers.get(shorten(xref.getId()))) {
+							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
+						}
+					}
+				}
+				if (matchEnantiomers && enantiomers != null) {
+					System.out.println("xref: " + xref);
+					xref.getId();
+					System.out.println("id: " + xref.getId());
+					shorten(xref.getId());
+					System.out.println("shortened: " + shorten(xref.getId()));
+					enantiomers.get(shorten(xref.getId()));
+					List<String> mappings = enantiomers.get(shorten(xref.getId()));
+					System.out.println("mappings: " + mappings);
+					if (mappings != null) {
+						for (String targetIDs : enantiomers.get(shorten(xref.getId()))) {
 							trgXrefs.add(new Xref("CHEBI:" + targetIDs, xref.getDataSource()));
 						}
 					}

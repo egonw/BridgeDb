@@ -116,6 +116,16 @@ public class ChEBIIDMapperTest {
 	}
 
 	@Test
+	public void testEnantiomers() throws IDMapperException, ClassNotFoundException {
+		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
+		DataSourceTxt.init(); 
+		IDMapper mapper = BridgeDb.connect("idmapper-chebi:matchEnantiomers");
+		Set<Xref> xrefs = mapper.mapID(new Xref("CHEBI:17561", DataSource.getExistingByFullName("ChEBI")));
+		Assert.assertEquals(1, xrefs.size());
+		Assert.assertTrue(xrefs.contains(new Xref("CHEBI:16375", DataSource.getExistingByFullName("ChEBI"))));
+	}
+
+	@Test
 	public void testGlucoseRoles() throws IDMapperException, ClassNotFoundException {
 		Class.forName("org.bridgedb.mapper.chebi.ChEBIIDMapper");
 		DataSourceTxt.init(); 
