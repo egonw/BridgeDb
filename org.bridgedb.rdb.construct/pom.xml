@@ -96,11 +96,11 @@
 			<artifactId>derbytools</artifactId>
 			<version>${derby.version}</version>
 		</dependency>
-                <dependency>
+                <!-- dependency>
                         <groupId>org.apache.derby</groupId>
                         <artifactId>derbyshared</artifactId>
                         <version>${derby.version}</version>
-                </dependency>
+                </dependency -->
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derbyclient</artifactId>
